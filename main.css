@@ -11,6 +11,15 @@ body {
 tr, td {
     padding: 20px;
     border: 2px solid red;
+    background: gray;
+}
+
+#clicked {
+    background: lightgray;
+}
+
+#mine {
+    background: red;
 }
 
 header {
