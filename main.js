@@ -43,7 +43,7 @@ function init() {
 function renderBoard() {
 
     buildBoard();
-    //layMines();
+    layMines();
 }
 
 function buildBoard() {
@@ -62,19 +62,21 @@ function buildBoard() {
             rowEl.appendChild(squareEl);
             idx++;
         }
-        
+
         boardEl.appendChild(rowEl);
     }
-    
-
 }
+
 function layMines() {
-    // Find a way to generate random location without repeating.
+
     for (let i = 0; i < MINE_COUNT; i++) {
         let randomMineIndex = Math.floor(Math.random() * (49 - 0 + 1) + 0);
 
-
-        console.log(randomMineIndex);
+        mycel = document.getElementsByTagName('td')[randomMineIndex];
+        mycel.innerHTML = 'X';
+    
+        console.log(mycel);
     }
+
     
 }
