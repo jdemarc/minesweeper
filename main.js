@@ -23,7 +23,7 @@ let board;
 
 /*----- cached element references -----*/
 const boardEl = document.getElementById('main-grid');
-console.log(boardEl);
+// console.log(boardEl);
 
 /*----- event listeners -----*/
 
@@ -32,8 +32,8 @@ console.log(boardEl);
 init();
 
 function init() {
-    board = Array(ROWS).fill().map( () => Array(COLS).fill(null));
-    //board = Array(ROWS * COLS).fill(null);
+    // board = Array(ROWS).fill().map( () => Array(COLS).fill(null));
+    board = Array(ROWS * COLS).fill(null);
     isPlaying = true;
     winner = null;
 
@@ -41,28 +41,9 @@ function init() {
 }
 
 function renderBoard() {
-    
-    // board.forEach(function(row, rowIdx) {
-    //     let rowEls = boardEl.insertRow(row);
 
-    //     console.log(rowEls);
-        
-    //     /*
-    //     row.forEach(function(sq) {
-    //         let squareEls = row.insertRow(sq);
-    //         console.log(squareEls);
-    //     })
-    //     */
-
-    //     // rowEls.className = 'row';
-    //     // rowEls.id = idx;
-    //     // rowEls.innerHTML = '';
-    //     // rowEls.style.backgroundColor = lookup[row];
-
-        
-    // })
     let idx = 0; // Variable to give each square a unique ID.
-    
+
     for (let i = 0; i < ROWS; i++) {
         let row = boardEl.insertRow(i);
 
@@ -71,19 +52,9 @@ function renderBoard() {
             let square = row.insertCell(j);
             square.setAttribute('id', idx)
             square.innerHTML = ' ';
-            console.log(square);
             idx++;
         }
     }
-
-    //  board.forEach(function(row) {
-    //      row.forEach(function(square, idx) {
-    //         let squareEls = document.createElement('div');
-    //         squareEls.className = 'square';
-    //         squareEls.style.backgroundColor = overloard[el];
-    //         boardEl.appendChild(squareEls);
-    //      })
-    //  });
 
     // layMines();
 }
