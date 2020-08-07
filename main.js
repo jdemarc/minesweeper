@@ -8,8 +8,6 @@ const overlord = {
     'safe': 'green',
 };
 
-
-
 /*----- app's state (variables) -----*/
 let winner;
     /**
@@ -18,7 +16,7 @@ let winner;
      * won
      * lost
      */
-let board = [ [] ];
+let board;
 
 /*----- cached element references -----*/
 const boardEl = document.getElementById('main-grid');
@@ -30,15 +28,28 @@ const boardEl = document.getElementById('main-grid');
 init();
 
 function init() {
-    board = Array(ROWS).fill().map( () => Array(COLS).fill(null));
+    // board = Array(ROWS).fill().map( () => Array(COLS).fill(null));
+    board = Array(ROWS * COLS).fill(null);
     winner = null;
 
-    // renderBoard();
+    renderBoard();
 }
 
 function renderBoard() {
 
-    // board.forEach(function(square, idx) {
-    //     squareEls[idx].style.background = colors[square];
-    // });
+    board.forEach(function(el, idx) {
+        let squareEls = document.createElement('div');
+        squareEls.className = 'square';
+        squareEls.id = idx;
+        boardEl.appendChild(squareEls);
+        squareEls.style.backgroundColor = overlord[el];
+    })
+
+    //  board.forEach(function(row) {
+    //      row.forEach(function(square, idx) {
+    //         let squareEls = document.createElement('div');
+    //         squareEls.className = 'square';
+    //         boardEl.appendChild(squareEls);
+    //      })
+    //  });
 }

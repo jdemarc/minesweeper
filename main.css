@@ -1,7 +1,21 @@
-.main-grid {
-    border: 1px solid black;
+body {
+    height: 100vh;
+    text-align: center;
 }
 
+#main-grid {
+    border: 1px solid black;
+    display: inline-grid;
+    grid-template-columns: repeat(7, 10vmin);
+    grid-template-rows: repeat(7, 10vmin);
+    
+}
+
+.square {
+    padding: 5px;
+    border: 1px solid purple;
+}
 header {
-    text-align: center;
+    margin: 10px 10px;
+    width: 100%;
 }
