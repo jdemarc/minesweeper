@@ -49,6 +49,7 @@ function renderBoard() {
     //      row.forEach(function(square, idx) {
     //         let squareEls = document.createElement('div');
     //         squareEls.className = 'square';
+    //         squareEls.style.backgroundColor = overloard[el];
     //         boardEl.appendChild(squareEls);
     //      })
     //  });
