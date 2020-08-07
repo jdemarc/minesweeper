@@ -5,15 +5,12 @@ body {
 
 #main-grid {
     border: 1px solid black;
-    display: inline-grid;
-    grid-template-columns: repeat(7, 10vmin);
-    grid-template-rows: repeat(7, 10vmin);
-    
+    margin: 0 auto;
 }
 
-.square {
-    padding: 5px;
-    border: 1px solid purple;
+tr, td {
+    padding: 20px;
+    border: 2px solid red;
 }
 header {
     margin: 10px 10px;
