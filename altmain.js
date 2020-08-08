@@ -65,36 +65,45 @@ function renderBoard() {
 }
 
 function handleSquareClick(event) {
-    console.log(event.target.id);
-    
+
     const cellIdx = parseInt(event.target.id);
     const cellClass = event.target.className;
     
-    console.log(cellClass);
-    
-    if (cellClass === 'mine') {
-        isPlaying = false;
-        return;
-    }
+    // if (cellClass === 'mine') {
+    //     isPlaying = false;
+    //     return;
+    // }
 
     board[cellIdx] = 'clicked';
 
-    checkAdjacentSquares(cellClass, cellIdx);
+    checkAdjacentSquares(cellIdx);
     
     renderBoard();
 }
 
-function checkAdjacentSquares(cClass, cIdx) {
+function checkAdjacentSquares(cIdx) {
     
     let minesFound = 0;
 
     //Returns index of cells surrounding the clicked cell.
     let neighborCellIdx = (getNeighborCells(cIdx));
-    
-    console.log(neighborCellIdx);
 
-    //Check if the cell at neighborCellIdx has the mine class.
-    
+    neighborCellIdx.forEach(function(index) {
+        if (cellEls[index].className === 'mine') {
+            minesFound++;
+            
+            // Assign minesFound number to cellEl at given index.
+        }
+    })
+
+    cellEls[cIdx].innerHTML = minesFound;
+
+    // Recursively check adjacent squares if no mines are found.
+    // if (minesFound === 0) {
+
+    // }
+
+    console.log(minesFound);
 }
 function getNeighborCells(cIdx) {
     let row = Math.floor(cIdx / 7);
@@ -169,7 +178,6 @@ function layMines() {
         
         if (!repeatedRands.includes(randMine)) {
             let cellEl = document.getElementById([randMine]);
-            cellEl.innerHTML = 'X'; // This goes away.
             cellEl.classList.remove('cell');
             cellEl.classList.add('mine');
 
