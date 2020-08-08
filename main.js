@@ -69,14 +69,22 @@ function buildBoard() {
 
 function layMines() {
 
+    let repeatedRands = [];
+
     for (let i = 0; i < MINE_COUNT; i++) {
-        let randomMineIndex = Math.floor(Math.random() * (49 - 0 + 1) + 0);
-
-        mycel = document.getElementsByTagName('td')[randomMineIndex];
-        mycel.innerHTML = 'X';
-    
-        console.log(mycel);
+        let randMine = generateRandNum();
+        
+        if (!repeatedRands.includes(randMine)) {
+            let randSquare = document.getElementsByTagName('td')[randMine];
+            randSquare.innerHTML = 'X';
+            repeatedRands.push(randMine);
+        } else {
+            randMine = generateRandNum();
+            i--;
+        }
     }
+}
 
-    
+function generateRandNum() {
+    return Math.floor(Math.random() * (ROWS*COLS - 0));
 }
