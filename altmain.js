@@ -50,7 +50,7 @@ function init() {
     isPlaying = true;
     winner = null;
 
-    layMines();
+    //layMines();
     renderBoard();
 }
 
@@ -100,39 +100,62 @@ function getNeighborCells(cellIdx) {
     let row = Math.floor(cellIdx / 7);
     let col = cellIdx % 7;
 
-    console.log('Row: ', row, 'Col: ', col);
+    // console.log('Row: ', row, 'Col: ', col);
     let neighbors = [];
 
     if (row === 0) {
+        //TOP LEFT
         if (col === 0) {
             neighbors.push(cellIdx + 1, cellIdx + 7, cellIdx + 8);
+            // console.log('Top left');
+        
+        //TOP MIDDLE
         } else if (col > 0 && col < 6) {
             neighbors.push(cellIdx - 1, cellIdx + 1, cellIdx + 6, cellIdx + 7, cellIdx + 8);
+            // console.log('Top middle');
+        
+        //TOP RIGHT
         } else {
             neighbors.push(cellIdx - 1, cellIdx + 6, cellIdx + 7);
+            // console.log('Top right');
         }
-    // } else if (row === 0 && (col > 0 && col < 6)) {
-    // } else if (row === 0 && col === 6) {
     
     } else if (row > 0 && row < 6) {
+        //MIDDLE LEFT
         if (col === 0) {
-            neighbors.push(cellIdx - 7, cellIdx - 6, cellIdx + 1, cellIdx + 7, cellIdx + 8)
-        }
+            neighbors.push(cellIdx - 7, cellIdx - 6, cellIdx + 1, cellIdx + 7, cellIdx + 8);
+            // console.log("Middle left");
+        
+        //MIDDLE RIGHT
+        } else if (col === 6) {
+            neighbors.push(cellIdx - 8, cellIdx - 7, cellIdx - 1, cellIdx + 6, cellIdx + 7);
+            // console.log('middle right');
 
+        //ANYWHERE NOT ON AN EDGE OR CORNER
+        } else {
+            neighbors.push(cellIdx - 8, cellIdx - 7, cellIdx - 6,
+                           cellIdx - 1,              cellIdx + 1,
+                           cellIdx + 6, cellIdx + 7, cellIdx + 8);
+            
+            // console.log("middle");
+        }
     
     } else if (row === 6) {
+        //BOTTOM LEFT
         if (col === 0) {
-            neighbors.push(cellIdx + 1, cellIdx - 7, cellIdx - 6);
+            neighbors.push(cellIdx - 7, cellIdx - 6, cellIdx + 1);
+            // console.log("bottom left");
+
+        //BOTTOM MIDDLE
         } else if (col > 0 && col < 6) {
             neighbors.push(cellIdx - 8, cellIdx - 7, cellIdx - 6, cellIdx - 1, cellIdx + 1);
-        } else {
-            neighbors.push(cellIdx - 1, cellIdx - 8, cellIdx - 7)
-        }
+            // console.log('bottom middle');
 
-        
-        // neighbors.push(cellIdx - 8, cellIdx - 7, cellIdx - 6,
-        //                cellIdx - 1,              cellIdx + 1,
-        //                cellIdx + 6, cellIdx + 7, cellIdx + 8);
+        // BOTTOM RIGHT
+        } else {
+            neighbors.push(cellIdx - 1, cellIdx - 8, cellIdx - 7);
+            // console.log('bottomRight');
+        }
     }
     
     return neighbors;
