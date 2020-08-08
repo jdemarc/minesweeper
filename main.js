@@ -23,10 +23,8 @@ let board;
 
 /*----- cached element references -----*/
 const boardEl = document.getElementById('main-grid');
-// console.log(boardEl);
 
 /*----- event listeners -----*/
-
 
 /*----- functions -----*/
 init();
@@ -46,6 +44,10 @@ function renderBoard() {
     layMines();
 }
 
+function handleSquareClick() {
+    
+}
+
 function buildBoard() {
     let idx = 0; // Variable to give each square a unique ID.
 
@@ -55,11 +57,11 @@ function buildBoard() {
         for(let j = 0; j < COLS; j++) {
             let squareEl = document.createElement('td');
             
-            squareEl.classList.add('cell');
             squareEl.setAttribute('id', idx);
             squareEl.innerHTML = '';
 
             rowEl.appendChild(squareEl);
+
             idx++;
         }
 
@@ -76,7 +78,8 @@ function layMines() {
         
         if (!repeatedRands.includes(randMine)) {
             let randSquare = document.getElementsByTagName('td')[randMine];
-            randSquare.innerHTML = 'X';
+            randSquare.innerHTML = 'X'; // This goes away later.
+            randSquare.classList.add('mine');
             repeatedRands.push(randMine);
         } else {
             randMine = generateRandNum();

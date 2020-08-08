@@ -22,6 +22,10 @@ tr, td {
     background: red;
 }
 
+#hidden {
+    display: none;
+}
+
 header {
     margin: 10px 10px;
     width: 100%;
