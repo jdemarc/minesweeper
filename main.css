@@ -1,4 +1,4 @@
-body {
+/* body {
     height: 100vh;
     text-align: center;
 }
@@ -29,4 +29,29 @@ tr, td {
 header {
     margin: 10px 10px;
     width: 100%;
+} */
+
+/* Static version */
+body {
+    height: 100vh;
+    text-align: center;
+    border: 1px solid black;
+}
+
+header {
+    margin: 20px 10px;
+    width: 100%
+}
+
+#main-grid {
+    display: inline-grid;
+    grid-template-columns: repeat(7, 10vmin);
+    grid-template-rows: repeat(7, 10vmin);
+    border: 1px solid green;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.cell {
+    border: 1px solid red;
 }
