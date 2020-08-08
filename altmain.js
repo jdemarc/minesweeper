@@ -6,7 +6,7 @@ const MINE_COUNT = 10;
 const lookup = {
     null: 'gray',
     flagged: 'yellow',
-    safe: 'green',
+    safe: 'lightgray',
     mine: 'red',
 };
 
@@ -22,11 +22,10 @@ let winner;
 let board;
 
 /*----- cached element references -----*/
-const boardEl = document.getElementById('main-grid');
-const squareEls = document.querySelectorAll('.cell');
+const squareEls = document.querySelectorAll('td');
 
 /*----- event listeners -----*/
-
+document.querySelector('table').addEventListener('click', handleSquareClick);
 
 /*----- functions -----*/
 init();
@@ -37,6 +36,7 @@ function init() {
     isPlaying = true;
     winner = null;
 
+    layMines();
     renderBoard();
 }
 
@@ -46,13 +46,32 @@ function renderBoard() {
         squareEls[idx].style.background = lookup[square];
     })
 
-    //winner
+    //winner;
 }
 
-function handleSquareClick() {
-    
+function handleSquareClick(event) {
+    console.log(event.target.id);
+
+    const idx = event.target.id;
+    const squareClass = event.target.className;
+
+    console.log(squareClass);
+
+    if (squareClass === 'mine') {
+        isPlaying = false;
+        return;
+    }
+
+    board[idx] = 'safe';
+
+    checkAdjacentSquares();
+
+    renderBoard();
 }
 
+function checkAdjacentSquares() {
+
+}
 
 function layMines() {
 
@@ -62,8 +81,10 @@ function layMines() {
         let randMine = generateRandNum();
         
         if (!repeatedRands.includes(randMine)) {
-            squareEls.classList.add('mine');
-            squareEls.innerHTML = 'X';
+            let squareEl = document.getElementById([randMine]);
+            squareEl.innerHTML = 'X'; // This goes away.
+            squareEl.classList.remove('cell');
+            squareEl.classList.add('mine');
 
             repeatedRands.push(randMine);
         } else {

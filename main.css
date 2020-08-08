@@ -43,15 +43,15 @@ header {
     width: 100%
 }
 
-#main-grid {
-    display: inline-grid;
-    grid-template-columns: repeat(7, 10vmin);
-    grid-template-rows: repeat(7, 10vmin);
-    border: 1px solid green;
-    justify-content: center;
-    margin-top: 20px;
+table {
+    margin: 0 auto;
+}
+tr, td {
+    height: 10vmin;
+    width: 10vmin;
 }
 
-.cell {
+.cell, .mine {
     border: 1px solid red;
 }
+
