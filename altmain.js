@@ -13,17 +13,6 @@ const lookup = {
 
 
 /*----- app's state (variables) -----*/
-/*
-class Cell {
-    constructor (id, rowPos, colPos) {
-        this.id = id;
-        this.rowPos = rowPos;
-        this.colPos = colPos;
-        this.isMine = false;
-        this.isFlagged = false;
-        this.isClicked = false;
-    }
-}; */
 
 let isPlaying; // boolean to determine if game is playing or game has stopped.
 let winner;
@@ -57,7 +46,7 @@ function init() {
 function renderBoard() {
 
     board.forEach(function(cell, idx) {
-        // cellEls[idx].innerHTML = idx; // Debugging
+        cellEls[idx].innerHTML = idx; // Debugging
         cellEls[idx].style.background = lookup[cell];
     })
 
@@ -68,16 +57,16 @@ function handleSquareClick(event) {
 
     const cellIdx = parseInt(event.target.id);
     const cellClass = event.target.className;
-    
+
     // if (cellClass === 'mine') {
     //     isPlaying = false;
+    //     revealBoard();
     //     return;
     // }
 
     board[cellIdx] = 'clicked';
-
-    checkAdjacentSquares(cellIdx);
     
+    checkAdjacentSquares(cellIdx);
     renderBoard();
 }
 
@@ -86,25 +75,33 @@ function checkAdjacentSquares(cIdx) {
     let minesFound = 0;
 
     //Returns index of cells surrounding the clicked cell.
-    let neighborCellIdx = (getNeighborCells(cIdx));
+    let neighborCellIdxArray = getNeighborCells(cIdx);
 
-    neighborCellIdx.forEach(function(index) {
-        if (cellEls[index].className === 'mine') {
+    neighborCellIdxArray.forEach(function (neighbor) {
+        if (cellEls[neighbor].className === 'mine') {
             minesFound++;
-            
-            // Assign minesFound number to cellEl at given index.
         }
     })
-
+    
     cellEls[cIdx].innerHTML = minesFound;
+ 
+    // Recursively
+    if (minesFound === 0) {
+        // Check each adjacent cell for a mine.
+        // Repeat.
+        let newNeighbors = [];
 
-    // Recursively check adjacent squares if no mines are found.
-    // if (minesFound === 0) {
+        neighborCellIdxArray.forEach(function (e) {
+            console.log(e);
+            newNeighbors = getNeighborCells(e);
 
-    // }
+            console.log(newNeighbors);
+            //checkAdjacentSquares(newNeighbors);
+        })
 
-    console.log(minesFound);
+    }
 }
+
 function getNeighborCells(cIdx) {
     let row = Math.floor(cIdx / 7);
     let col = cIdx % 7;
@@ -178,8 +175,8 @@ function layMines() {
         
         if (!repeatedRands.includes(randMine)) {
             let cellEl = document.getElementById([randMine]);
-            cellEl.classList.remove('cell');
-            cellEl.classList.add('mine');
+            cellEl.setAttribute('class', 'mine');
+            //board[randMine] = 'mine';
 
             repeatedRands.push(randMine);
         } else {
