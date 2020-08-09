@@ -57,10 +57,11 @@ function handleSquareClick(event) {
 
     console.log('Type of event: ', typeof event);
     console.log('event.target: ', event.target)
-
-    let cellId = event.target.id;
-    let cellIdx = cellId.replace(/\D/g, '');
-
+    
+    //strip 'c-' from id
+    let cellIdx = event.target.id.replace('c-', '');
+    cellIdx = parseInt(cellIdx);
+    
     console.log('event.target.id: ', cellIdx);
     const cellClass = event.target.className;
 
@@ -69,11 +70,10 @@ function handleSquareClick(event) {
     //     revealBoard();
     //     return;
     // }
-
+    
     board[cellIdx] = 'clicked';
+    console.log('board[cellIdx]: ', board[cellIdx]);
 
-
-    cellIdx = parseInt(cellIdx);
     checkAdjacentSquares(cellIdx);
     renderBoard();
 }
@@ -83,6 +83,7 @@ function checkAdjacentSquares(cIdx) {
     let minesFound = 0;
     
     let neighborCellIdxArray = getNeighborCells(cIdx);
+    console.log(neighborCellIdxArray);
     //Returns index of cells surrounding the clicked cell.
 
     neighborCellIdxArray.forEach(function (neighbor) {
@@ -95,16 +96,18 @@ function checkAdjacentSquares(cIdx) {
  
     // Recursively
     if (minesFound === 0) {
-        
-        // console.log('Initial neighbor cells', neighborCellIdxArray);
 
         neighborCellIdxArray.forEach(function (e) {
             console.log('e', e);
+            console.log('board[e]', board[e]);
             console.log('Cell el[e]', cellEls[e]);
             console.log('Type of cellEls[e]', typeof cellEls[e]);
-            //handleSquareClick(cellEls[e]);
+            //checkAdjacentSquares(cellEls[e]);
+             //handleSquareClick(cellEls[e]);
         })
 
+        /// Go to each neighbor and check their adjacent cells.  If it is zero again,
+        /// repeat.
     }
 }
 
