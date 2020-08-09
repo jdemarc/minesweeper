@@ -1,7 +1,7 @@
 /*----- constants -----*/
 const ROWS = 7;
 const COLS = 7;
-const MINE_COUNT = 10;
+const MINE_COUNT = 9;
 
 const lookup = {
     unclicked: 'gray',
@@ -46,7 +46,7 @@ function init() {
 function renderBoard() {
 
     board.forEach(function(cell, idx) {
-        cellEls[idx].innerHTML = idx; // Debugging
+        //cellEls[idx].innerHTML = idx; // Debugging
         cellEls[idx].style.background = lookup[cell];
     })
 
@@ -55,7 +55,13 @@ function renderBoard() {
 
 function handleSquareClick(event) {
 
-    const cellIdx = parseInt(event.target.id);
+    console.log('Type of event: ', typeof event);
+    console.log('event.target: ', event.target)
+
+    let cellId = event.target.id;
+    let cellIdx = cellId.replace(/\D/g, '');
+
+    console.log('event.target.id: ', cellIdx);
     const cellClass = event.target.className;
 
     // if (cellClass === 'mine') {
@@ -65,7 +71,9 @@ function handleSquareClick(event) {
     // }
 
     board[cellIdx] = 'clicked';
-    
+
+
+    cellIdx = parseInt(cellIdx);
     checkAdjacentSquares(cellIdx);
     renderBoard();
 }
@@ -73,30 +81,28 @@ function handleSquareClick(event) {
 function checkAdjacentSquares(cIdx) {
     
     let minesFound = 0;
-
-    //Returns index of cells surrounding the clicked cell.
+    
     let neighborCellIdxArray = getNeighborCells(cIdx);
+    //Returns index of cells surrounding the clicked cell.
 
     neighborCellIdxArray.forEach(function (neighbor) {
         if (cellEls[neighbor].className === 'mine') {
             minesFound++;
         }
     })
-    
+
     cellEls[cIdx].innerHTML = minesFound;
  
     // Recursively
     if (minesFound === 0) {
-        // Check each adjacent cell for a mine.
-        // Repeat.
-        let newNeighbors = [];
+        
+        // console.log('Initial neighbor cells', neighborCellIdxArray);
 
         neighborCellIdxArray.forEach(function (e) {
-            console.log(e);
-            newNeighbors = getNeighborCells(e);
-
-            console.log(newNeighbors);
-            //checkAdjacentSquares(newNeighbors);
+            console.log('e', e);
+            console.log('Cell el[e]', cellEls[e]);
+            console.log('Type of cellEls[e]', typeof cellEls[e]);
+            //handleSquareClick(cellEls[e]);
         })
 
     }
@@ -172,9 +178,10 @@ function layMines() {
 
     for (let i = 0; i < MINE_COUNT; i++) {
         let randMine = generateRandNum();
+        let rMine = 'c-' + randMine;
         
-        if (!repeatedRands.includes(randMine)) {
-            let cellEl = document.getElementById([randMine]);
+        if (!repeatedRands.includes(rMine)) {
+            let cellEl = document.getElementById(rMine);
             cellEl.setAttribute('class', 'mine');
             //board[randMine] = 'mine';
 
