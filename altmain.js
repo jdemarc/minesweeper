@@ -55,13 +55,14 @@ function renderBoard() {
 
 function handleSquareClick(event) {
 
+    console.log('Event: ', event);
     console.log('Type of event: ', typeof event);
     console.log('event.target: ', event.target)
+    //console.log('event.currentTarget', event.currentTarget);
     
     //strip 'c-' from id
     let cellIdx = event.target.id.replace('c-', '');
-    cellIdx = parseInt(cellIdx);
-    
+
     console.log('event.target.id: ', cellIdx);
     const cellClass = event.target.className;
 
@@ -74,15 +75,16 @@ function handleSquareClick(event) {
     board[cellIdx] = 'clicked';
     console.log('board[cellIdx]: ', board[cellIdx]);
 
+    
     checkAdjacentSquares(cellIdx);
     renderBoard();
 }
 
 function checkAdjacentSquares(cIdx) {
-    
+
     let minesFound = 0;
     
-    let neighborCellIdxArray = getNeighborCells(cIdx);
+    let neighborCellIdxArray = getNeighborCells(parseInt(cIdx));
     console.log(neighborCellIdxArray);
     //Returns index of cells surrounding the clicked cell.
 
@@ -90,20 +92,28 @@ function checkAdjacentSquares(cIdx) {
         if (cellEls[neighbor].className === 'mine') {
             minesFound++;
         }
+        cellEls[cIdx].innerHTML = minesFound;
     })
 
-    cellEls[cIdx].innerHTML = minesFound;
  
     // Recursively
     if (minesFound === 0) {
 
         neighborCellIdxArray.forEach(function (e) {
-            console.log('e', e);
+
             console.log('board[e]', board[e]);
-            console.log('Cell el[e]', cellEls[e]);
+            console.log('cellEls[e]', cellEls[e]);
             console.log('Type of cellEls[e]', typeof cellEls[e]);
-            //checkAdjacentSquares(cellEls[e]);
-             //handleSquareClick(cellEls[e]);
+            console.log('e', e);
+            console.log('e.target', e.target);
+            console.log('cellEls[e].target, ', cellEls[e].target);
+            console.log('cellEls[e].id: ', cellEls[e].id);
+            
+            console.log('END CHECK ADJ');
+            handleSquareClick(cellEls[e]);
+            //checkAdjacentSquares(e); close
+            //event.target undefined -- is it because there is nothing in the HTML?
+                
         })
 
         /// Go to each neighbor and check their adjacent cells.  If it is zero again,
