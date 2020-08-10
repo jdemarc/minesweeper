@@ -7,9 +7,8 @@ const lookup = {
     unclicked: 'gray',
     clicked: 'lightgray',
     mine: 'gray',
-    reveal: 'red'//'String.fromCodePoint(0x1F4A3)' // img
+    reveal: 'red' //'String.fromCodePoint(0x1F4A3)' // img
 };
-
 
 /*----- app's state (variables) -----*/
 
@@ -25,6 +24,7 @@ let board;
 
 /*----- cached element references -----*/
 const cellEls = document.querySelectorAll('td');
+const message = document.getElementById('message');
 
 /*----- event listeners -----*/
 document.querySelector('table').addEventListener('click', handleSquareClick);
@@ -36,7 +36,7 @@ init();
 function init() {
     board = Array(ROWS * COLS).fill('unclicked');
     isPlaying = true;
-    winner = null;
+    winner = 'N';
 
     layMines();
     renderBoard();
@@ -49,7 +49,12 @@ function renderBoard() {
     board.forEach(function(cell, idx) {
         cellEls[idx].style.background = lookup[cell];
     })
-    // winner
+
+    if (!isPlaying && winner === 'L') {
+        message.innerHTML = 'Frown';
+    } else if (winner === 'N') {
+        message.innerHTML = 'Neutral';
+    }
 }
 
 //TODO
@@ -58,13 +63,29 @@ function getWinner() {
 }
 
 function handleSquareClick(event) {
+    //Capture right click
 
     if (event.target === undefined) {
         let cellIdx = event.id.replace('c-', '');
 
+
+        if (board[cellIdx] === 'mine') {
+
+            console.log(board[cellIdx]);
+
+            isPlaying = false;
+            winner = 'L';
+
+            revealMines();
+            cellEls.style.pointerEvents = 'none';
+
+            return;
+        }
+        
         checkAdjacentSquares(cellIdx);
         renderBoard();
 
+            
     } else {
         //Original Event Click
         
@@ -75,10 +96,11 @@ function handleSquareClick(event) {
         if (board[cellIdx] === 'mine') {
 
             console.log(board[cellIdx]);
+            isPlaying = false;
+            winner = 'L';
+
             revealMines();
 
-            isPlaying = false;
-            winner = 'F';
             return;
         }
 
@@ -86,8 +108,9 @@ function handleSquareClick(event) {
         
         checkAdjacentSquares(cellIdx);
         renderBoard();
+
     }
-    
+
 }
 
 function revealMines() {
@@ -107,6 +130,8 @@ function handleResetClick() {
     board.forEach(function (cellEl, idx) {
         cellEls[idx].innerHTML = '';
     })
+
+    message.innerHTML = 'Neutral';
 }
 
 
