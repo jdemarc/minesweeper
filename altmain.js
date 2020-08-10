@@ -51,9 +51,11 @@ function renderBoard() {
     })
 
     if (!isPlaying && winner === 'L') {
-        message.innerHTML = 'Frown';
+        message.innerHTML = String.fromCodePoint('0x1F631')
     } else if (winner === 'N') {
-        message.innerHTML = 'Neutral';
+        message.innerHTML = String.fromCodePoint('0x1F610');
+    } else if (winner === 'W') {
+        message.innerHTML = String.fromCodePoint('0x1F642');
     }
 }
 
@@ -68,6 +70,7 @@ function handleSquareClick(event) {
     if (event.target === undefined) {
         let cellIdx = event.id.replace('c-', '');
 
+        if(!isPlaying) return;
 
         if (board[cellIdx] === 'mine') {
 
@@ -89,6 +92,7 @@ function handleSquareClick(event) {
     } else {
         //Original Event Click
         
+        if (!isPlaying) return;
         //strip 'c-' from id
         let cellIdx = event.target.id.replace('c-', '');
 
