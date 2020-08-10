@@ -124,14 +124,12 @@ function revealMines() {
 }
 
 function handleResetClick() {
-    init();
-
+    
     // Reset HTML of cells.
     board.forEach(function (cellEl, idx) {
         cellEls[idx].innerHTML = '';
     })
-
-    message.innerHTML = 'Neutral';
+    init();
 }
 
 
