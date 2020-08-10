@@ -1,15 +1,13 @@
 /*----- constants -----*/
 const ROWS = 7;
 const COLS = 7;
-const MINE_COUNT = 9;
+const MINE_COUNT = 10;
 
 const lookup = {
     unclicked: 'gray',
     clicked: 'lightgray',
-
-    flagged: 'yellow', // img
     mine: 'gray',
-    reveal: 'red' // img
+    reveal: 'red'//'String.fromCodePoint(0x1F4A3)' // img
 };
 
 
@@ -36,48 +34,42 @@ document.getElementById('reset').addEventListener('click', handleResetClick);
 init();
 
 function init() {
-    //board = Array(ROWS).fill().map( () => Array(COLS).fill('null'));
     board = Array(ROWS * COLS).fill('unclicked');
     isPlaying = true;
     winner = null;
 
     layMines();
     renderBoard();
+
+    console.log(board);
 }
 
 function renderBoard() {
-
+    
     board.forEach(function(cell, idx) {
         cellEls[idx].style.background = lookup[cell];
     })
-
     // winner
+}
+
+//TODO
+function getWinner() {
+
 }
 
 function handleSquareClick(event) {
 
-    if (event.target == undefined) {
-        // console.log('hitting recursive inside handle square');
-        // console.log('Event for undefined target', event);
+    if (event.target === undefined) {
         let cellIdx = event.id.replace('c-', '');
 
-        //ISSUE WAS HERE
         checkAdjacentSquares(cellIdx);
         renderBoard();
 
     } else {
-
-        //event is original 'click' here ************
-
-        // console.log('Event: ', event);
-        // console.log('Type of event: ', typeof event);
-        // console.log('event.target: ', event.target)
+        //Original Event Click
         
         //strip 'c-' from id
         let cellIdx = event.target.id.replace('c-', '');
-
-        const cellClass = event.target.className;
-        //
 
         //TODO
         if (board[cellIdx] === 'mine') {
@@ -108,10 +100,13 @@ function revealMines() {
     renderBoard();
 }
 
-// TODO
 function handleResetClick() {
-    //init();
-    //cellEls.innerHTML = '';
+    init();
+
+    // Reset HTML of cells.
+    board.forEach(function (cellEl, idx) {
+        cellEls[idx].innerHTML = '';
+    })
 }
 
 
@@ -122,7 +117,7 @@ function checkAdjacentSquares(cIdx) {
     let neighborCellIdxArray = getNeighborCells(parseInt(cIdx));
 
     neighborCellIdxArray.forEach(function (neighbor) {
-        if (cellEls[neighbor].className === 'mine') {
+        if (board[neighbor] === 'mine') {
             minesFound++;
         }
 
@@ -207,16 +202,20 @@ function layMines() {
         let rMine = 'c-' + randMine;
         
         if (!repeatedRands.includes(rMine)) {
+            //used for debugging
             let cellEl = document.getElementById(rMine);
-            cellEl.setAttribute('class', 'mine');
+            cellEl.innerHTML = 'm';
+
             board[randMine] = 'mine';
 
-            repeatedRands.push(randMine);
+            repeatedRands.push(rMine);
         } else {
             randMine = generateRandNum();
             i--;
         }
     }
+
+    console.log('Randoms: ', repeatedRands);
 }
 
 function generateRandNum() {
