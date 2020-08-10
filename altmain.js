@@ -8,8 +8,8 @@ const lookup = {
     clicked: 'lightgray',
 
     flagged: 'yellow', // img
-    mine: 'gray', // img
-    //reveal: 'red' // img
+    mine: 'gray',
+    reveal: 'red' // img
 };
 
 
@@ -30,6 +30,7 @@ const cellEls = document.querySelectorAll('td');
 
 /*----- event listeners -----*/
 document.querySelector('table').addEventListener('click', handleSquareClick);
+document.getElementById('reset').addEventListener('click', handleResetClick);
 
 /*----- functions -----*/
 init();
@@ -56,8 +57,8 @@ function renderBoard() {
 function handleSquareClick(event) {
 
     if (event.target == undefined) {
-        console.log('hitting recursive inside handle square');
-        console.log('Event for undefined target', event);
+        // console.log('hitting recursive inside handle square');
+        // console.log('Event for undefined target', event);
         let cellIdx = event.id.replace('c-', '');
 
         //ISSUE WAS HERE
@@ -78,10 +79,14 @@ function handleSquareClick(event) {
         const cellClass = event.target.className;
         //
 
-        if (cellClass === 'mine') {
+        //TODO
+        if (board[cellIdx] === 'mine') {
+
+            console.log(board[cellIdx]);
+            revealMines();
+
             isPlaying = false;
             winner = 'F';
-            revealMines();
             return;
         }
 
@@ -95,11 +100,20 @@ function handleSquareClick(event) {
 
 function revealMines() {
     board.forEach(function (cell, idx) {
-        if (board[cell] === 'mine') {
-            board[idx].style.background = lookup[reveal];
+        if (cell === 'mine') {
+            board[idx] = 'reveal';
         }
     })
+
+    renderBoard();
 }
+
+// TODO
+function handleResetClick() {
+    //init();
+    //cellEls.innerHTML = '';
+}
+
 
 function checkAdjacentSquares(cIdx) {
 
