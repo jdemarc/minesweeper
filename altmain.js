@@ -28,6 +28,12 @@ const secondsEl = document.getElementById('seconds');
 /*----- event listeners -----*/
 document.querySelector('table').addEventListener('click', handleLeftClick);
 document.querySelector('table').addEventListener('contextmenu', handleRightClick);
+
+cellEls.forEach(function(e) {
+    e.addEventListener('mouseenter', handleMouseEnter);
+    e.addEventListener('mouseleave', handleMouseLeave);
+})
+
 document.getElementById('reset').addEventListener('click', handleResetClick);
 
 /*----- functions -----*/
@@ -72,6 +78,23 @@ function getWinner() {
     }
 
     return 'N';
+}
+
+function handleMouseEnter(event) {
+    if (!isPlaying) return;
+
+    if (event.target.innerHTML === '') {
+        event.target.style.background = 'lightgray';
+    }
+}
+
+function handleMouseLeave(event) {
+    if (!isPlaying) return;
+
+    if (event.target.innerHTML === '') {
+        event.target.style.background = 'darkgray';
+    }
+
 }
 
 function handleLeftClick(event) {
@@ -119,9 +142,15 @@ function handleRightClick(event) {
     }
 }
 
+// Condense with if.
+function reveal() {
+    
+}
+
 function revealFlags() {
     board.forEach(function(cell, idx) {
         if (cell === 'mine') {
+            board[idx] = 'flagged';
             cellEls[idx].setAttribute('class', 'flagged');
         }
     })
@@ -288,3 +317,5 @@ function timer() {
 function stopTimer(t) {
     clearInterval(t);
 }
+
+//board
