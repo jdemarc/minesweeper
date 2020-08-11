@@ -7,7 +7,7 @@ const lookup = {
     unclicked: 'gray',
     clicked: 'lightgray',
     mine: 'gray',
-    reveal: 'red' //'String.fromCodePoint(0x1F4A3)' // img
+    reveal: 'red',// img
 };
 
 /*----- app's state (variables) -----*/
@@ -121,6 +121,8 @@ function revealMines() {
     board.forEach(function (cell, idx) {
         if (cell === 'mine') {
             board[idx] = 'reveal';
+            cellEls[idx].setAttribute('class', 'bomb');
+            cellEls[idx].innerHTML = String.fromCodePoint(0x1F4A3);
         }
     })
 
@@ -132,6 +134,7 @@ function handleResetClick() {
     // Reset HTML of cells.
     board.forEach(function (cellEl, idx) {
         cellEls[idx].innerHTML = '';
+        cellEls[idx].setAttribute('class', 'cell');
     })
     init();
 }
