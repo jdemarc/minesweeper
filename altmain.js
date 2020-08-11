@@ -76,42 +76,19 @@ function getWinner() {
 function handleLeftClick(event) {
 
     if (event.target === undefined) {
-        if(!isPlaying) return;
-
-        let cellIdx = event.id.replace('c-', '');
-
-        if (cellEls[cellIdx].classList.contains('flagged')) return;
-
-        if (board[cellIdx] === 'mine') {
-
-            isPlaying = false;
-            winner = 'L';
-
-            revealMines();
-            cellEls.style.pointerEvents = 'none';
-
-            return;
-        }
-        
-        board[cellIdx] = 'clicked';
-
-        checkAdjacentSquares(cellIdx);
-        winner = getWinner();
-        renderBoard();
-
+    let cellIdxUndef = event.id.replace('c-', '');
+        evaluateSquare(cellIdxUndef);
             
     } else {
 
-        evaluateSquare(event);
-
+    // Parse integer from element id.
+    let cellIdx = event.target.id.replace('c-', '');
+        evaluateSquare(cellIdx);
     }
 }
 
-function evaluateSquare(event) {
+function evaluateSquare(cellIdx) {
     if (!isPlaying) return;
-
-    // Parse integer from element id.
-    let cellIdx = event.target.id.replace('c-', '');
     
     // Prevent clicking flagged squares.
     if (cellEls[cellIdx].classList.contains('flagged')) return;
@@ -133,7 +110,6 @@ function evaluateSquare(event) {
     renderBoard();
 }
 
-//TODO: Fix bug with overriding mine class name.
 function handleRightClick(event) {
     if (!isPlaying) return;
 
@@ -143,7 +119,6 @@ function handleRightClick(event) {
     if ((cellEls[idx].innerHTML === '')) {
         cellEls[idx].classList.toggle('flagged');
     }
-
 }
 
 function revealMines() {
