@@ -60,19 +60,17 @@ tr, td {
     width: 10vmin;
 }
 
-.cell {
-    border: 1px solid green;
-}
-
 .mine {
     border: 3px solid red;
 }
 
 .bomb {
-    margin: 0;
-    text-align: center;
-    
     font-size: 30px;
+}
+
+.flagged::before {
+    content: "\02757";
+    font-size: 20px;
 }
 
 button {

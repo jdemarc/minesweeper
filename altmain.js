@@ -4,23 +4,18 @@ const COLS = 7;
 const MINE_COUNT = 10;
 
 const lookup = {
-    unclicked: 'gray',
+    unclicked: 'darkgray',
     clicked: 'lightgray',
 
-    mine: 'gray',
-    reveal: 'red'// img
+    mine: 'darkgray',
+    flagged: 'darkgray',
+    reveal: 'red'
 };
 
 /*----- app's state (variables) -----*/
 
-let isPlaying; // boolean to determine if game is playing or game has stopped.
+let isPlaying;
 let winner;
-    /**
-     * winner states ---
-     * null
-     * won
-     * lost
-     */
 let board;
 
 /*----- cached element references -----*/
@@ -28,7 +23,8 @@ const cellEls = document.querySelectorAll('td');
 const message = document.getElementById('message');
 
 /*----- event listeners -----*/
-document.querySelector('table').addEventListener('click', handleSquareClick);
+document.querySelector('table').addEventListener('click', handleLeftClick);
+document.querySelector('table').addEventListener("contextmenu", handleRightClick);
 document.getElementById('reset').addEventListener('click', handleResetClick);
 
 /*----- functions -----*/
@@ -57,7 +53,7 @@ function renderBoard() {
 function renderMessage() {
 
     if (!isPlaying && winner === 'L') {
-        message.innerHTML = String.fromCodePoint('0x1F631')
+        message.innerHTML = String.fromCodePoint('0x1F480')
     } else if (winner === 'N') {
         message.innerHTML = String.fromCodePoint('0x1F610');
     } else {
@@ -65,6 +61,7 @@ function renderMessage() {
     }
 }
 
+//TO DO .... user must set flags in appropriate spaces AND have no unclicked areas.
 function getWinner() {
 
     if (!board.includes('unclicked')) {
@@ -76,17 +73,16 @@ function getWinner() {
     return 'N';
 }
 
-function handleSquareClick(event) {
-    //Capture right click
+function handleLeftClick(event) {
 
     if (event.target === undefined) {
-        let cellIdx = event.id.replace('c-', '');
-
         if(!isPlaying) return;
 
-        if (board[cellIdx] === 'mine') {
+        let cellIdx = event.id.replace('c-', '');
 
-            console.log(board[cellIdx]);
+        if (cellEls[cellIdx].classList.contains('flagged')) return;
+
+        if (board[cellIdx] === 'mine') {
 
             isPlaying = false;
             winner = 'L';
@@ -97,38 +93,55 @@ function handleSquareClick(event) {
             return;
         }
         
+        board[cellIdx] = 'clicked';
+
         checkAdjacentSquares(cellIdx);
-
         winner = getWinner();
-
         renderBoard();
 
             
     } else {
-        //Original Event Click
-        
-        if (!isPlaying) return;
-        //strip 'c-' from id
-        let cellIdx = event.target.id.replace('c-', '');
 
-        //TODO
-        if (board[cellIdx] === 'mine') {
+        evaluateSquare(event);
 
-            console.log(board[cellIdx]);
-            isPlaying = false;
-            winner = 'L';
+    }
+}
 
-            revealMines();
+function evaluateSquare(event) {
+    if (!isPlaying) return;
 
-            return;
-        }
+    // Parse integer from element id.
+    let cellIdx = event.target.id.replace('c-', '');
+    
+    // Prevent clicking flagged squares.
+    if (cellEls[cellIdx].classList.contains('flagged')) return;
 
-        board[cellIdx] = 'clicked';
-        
-        checkAdjacentSquares(cellIdx);
-        winner = getWinner();
-        renderBoard();
+    if (board[cellIdx] === 'mine') {
 
+        isPlaying = false;
+        winner = 'L';
+
+        revealMines();
+        cellEls.style.pointerEvents = 'none';
+        return;
+    }
+
+    board[cellIdx] = 'clicked';
+    
+    checkAdjacentSquares(cellIdx);
+    winner = getWinner();
+    renderBoard();
+}
+
+//TODO: Fix bug with overriding mine class name.
+function handleRightClick(event) {
+    if (!isPlaying) return;
+
+    event.preventDefault();
+    const idx = event.target.id.replace('c-', '');
+
+    if ((cellEls[idx].innerHTML === '')) {
+        cellEls[idx].classList.toggle('flagged');
     }
 
 }
@@ -179,7 +192,7 @@ function checkAdjacentSquares(cIdx) {
 
         neighborCellIdxArray.forEach(function (e) {
             if (board[e] === 'unclicked') {
-                handleSquareClick(cellEls[e]);
+                handleLeftClick(cellEls[e]);
             }
         })
     }
