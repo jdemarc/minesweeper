@@ -20,11 +20,11 @@ let board;
 
 /*----- cached element references -----*/
 const cellEls = document.querySelectorAll('td');
-const message = document.getElementById('message');
+const emoji = document.getElementById('emoji');
 
 /*----- event listeners -----*/
 document.querySelector('table').addEventListener('click', handleLeftClick);
-document.querySelector('table').addEventListener("contextmenu", handleRightClick);
+document.querySelector('table').addEventListener('contextmenu', handleRightClick);
 document.getElementById('reset').addEventListener('click', handleResetClick);
 
 /*----- functions -----*/
@@ -45,17 +45,17 @@ function renderBoard() {
         cellEls[idx].style.background = lookup[cell];
     })
 
-    renderMessage();
+    renderEmoji();
 }
 
-function renderMessage() {
+function renderEmoji() {
 
     if (!isPlaying && winner === 'L') {
-        message.innerHTML = String.fromCodePoint('0x1F480')
+        emoji.innerHTML = String.fromCodePoint('0x1F480')
     } else if (winner === 'N') {
-        message.innerHTML = String.fromCodePoint('0x1F610');
+        emoji.innerHTML = String.fromCodePoint('0x1F610');
     } else {
-        message.innerHTML = String.fromCodePoint('0x1F60E');
+        emoji.innerHTML = String.fromCodePoint('0x1F60E');
     }
 }
 
@@ -144,7 +144,6 @@ function handleResetClick() {
 
     init();
 }
-
 
 function checkAdjacentSquares(cIdx) {
 
