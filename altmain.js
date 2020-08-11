@@ -6,8 +6,9 @@ const MINE_COUNT = 10;
 const lookup = {
     unclicked: 'gray',
     clicked: 'lightgray',
+
     mine: 'gray',
-    reveal: 'red',// img
+    reveal: 'red'// img
 };
 
 /*----- app's state (variables) -----*/
@@ -50,18 +51,29 @@ function renderBoard() {
         cellEls[idx].style.background = lookup[cell];
     })
 
+    renderMessage();
+}
+
+function renderMessage() {
+
     if (!isPlaying && winner === 'L') {
         message.innerHTML = String.fromCodePoint('0x1F631')
     } else if (winner === 'N') {
         message.innerHTML = String.fromCodePoint('0x1F610');
-    } else if (winner === 'W') {
-        message.innerHTML = String.fromCodePoint('0x1F642');
+    } else {
+        message.innerHTML = String.fromCodePoint('0x1F60E');
     }
 }
 
-//TODO
 function getWinner() {
 
+    if (!board.includes('unclicked')) {
+        isPlaying = false;
+        revealMines();
+        return 'W';
+    }
+
+    return 'N';
 }
 
 function handleSquareClick(event) {
@@ -86,6 +98,9 @@ function handleSquareClick(event) {
         }
         
         checkAdjacentSquares(cellIdx);
+
+        winner = getWinner();
+
         renderBoard();
 
             
@@ -111,6 +126,7 @@ function handleSquareClick(event) {
         board[cellIdx] = 'clicked';
         
         checkAdjacentSquares(cellIdx);
+        winner = getWinner();
         renderBoard();
 
     }
@@ -136,6 +152,7 @@ function handleResetClick() {
         cellEls[idx].innerHTML = '';
         cellEls[idx].setAttribute('class', 'cell');
     })
+
     init();
 }
 

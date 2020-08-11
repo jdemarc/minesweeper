@@ -47,9 +47,14 @@ header {
     width: 100%
 }
 
+#message {
+    font-size: 30px;
+}
+
 table {
     margin: 0 auto;
 }
+
 tr, td {
     height: 10vmin;
     width: 10vmin;
@@ -70,3 +75,6 @@ tr, td {
     font-size: 30px;
 }
 
+button {
+    margin-top: 5vh;
+}
