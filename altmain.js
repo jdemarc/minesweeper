@@ -37,8 +37,6 @@ function init() {
 
     layMines();
     renderBoard();
-
-    console.log(board);
 }
 
 function renderBoard() {
@@ -75,16 +73,12 @@ function getWinner() {
 
 function handleLeftClick(event) {
 
-    if (event.target === undefined) {
-    let cellIdxUndef = event.id.replace('c-', '');
-        evaluateSquare(cellIdxUndef);
-            
-    } else {
+    let cellIdx;
 
-    // Parse integer from element id.
-    let cellIdx = event.target.id.replace('c-', '');
-        evaluateSquare(cellIdx);
-    }
+    event.target === undefined ? cellIdx = event.id.replace('c-', '')
+        : cellIdx = event.target.id.replace('c-', '');
+
+    evaluateSquare(cellIdx);
 }
 
 function evaluateSquare(cellIdx) {
@@ -249,8 +243,6 @@ function layMines() {
             i--;
         }
     }
-
-    console.log('Randoms: ', repeatedRands);
 }
 
 function generateRandNum() {
