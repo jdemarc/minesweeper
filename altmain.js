@@ -59,12 +59,11 @@ function renderMessage() {
     }
 }
 
-//TO DO .... user must set flags in appropriate spaces AND have no unclicked areas.
 function getWinner() {
 
     if (!board.includes('unclicked')) {
         isPlaying = false;
-        revealMines();
+        revealFlags();
         return 'W';
     }
 
@@ -93,7 +92,6 @@ function evaluateSquare(cellIdx) {
         winner = 'L';
 
         revealMines();
-        cellEls.style.pointerEvents = 'none';
         return;
     }
 
@@ -115,12 +113,21 @@ function handleRightClick(event) {
     }
 }
 
+function revealFlags() {
+    board.forEach(function(cell, idx) {
+        if (cell === 'mine') {
+            cellEls[idx].setAttribute('class', 'flagged');
+        }
+    })
+
+    renderBoard();
+}
+
 function revealMines() {
     board.forEach(function (cell, idx) {
         if (cell === 'mine') {
             board[idx] = 'reveal';
             cellEls[idx].setAttribute('class', 'bomb');
-            cellEls[idx].innerHTML = String.fromCodePoint(0x1F4A3);
         }
     })
 
@@ -232,8 +239,8 @@ function layMines() {
         
         if (!repeatedRands.includes(rMine)) {
             //used for debugging
-            let cellEl = document.getElementById(rMine);
-            cellEl.innerHTML = 'm';
+            // let cellEl = document.getElementById(rMine);
+            // cellEl.innerHTML = 'm';
 
             board[randMine] = 'mine';
 

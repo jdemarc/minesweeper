@@ -37,39 +37,41 @@ header {
 }
 
 body {
-    height: 100vh;
+    height: auto;
     text-align: center;
-    border: 1px solid black;
+    border: 1px solid black; /* this goes away */
 }
 
 header {
-    margin: 20px 10px;
+    margin: 3.22vh 1.66vh;
     width: 100%
 }
 
 #message {
+    margin: 10px;
     font-size: 30px;
 }
 
 table {
     margin: 0 auto;
+    border-spacing: 0;
+    border: 3px solid black;
 }
 
 tr, td {
-    height: 10vmin;
-    width: 10vmin;
+    height: 7vmin;
+    width: 7vmin;
+    border: 3px solid black;
 }
 
-.mine {
-    border: 3px solid red;
-}
 
-.bomb {
-    font-size: 30px;
+.bomb::before {
+    content: '\1F4A3';
+    font-size: 20px;
 }
 
 .flagged::before {
-    content: "\02757";
+    content: '\02757';
     font-size: 20px;
 }
 
