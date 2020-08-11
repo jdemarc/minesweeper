@@ -17,10 +17,13 @@ const lookup = {
 let isPlaying; // true or false
 let winner; // W, N, L
 let board;
+let time;
 
 /*----- cached element references -----*/
 const cellEls = document.querySelectorAll('td');
-const emojiEl = document.getElementById('emoji');
+const emojiEl = document.querySelector('.emoji');
+const minutesEl = document.getElementById('minutes');
+const secondsEl = document.getElementById('seconds');
 
 /*----- event listeners -----*/
 document.querySelector('table').addEventListener('click', handleLeftClick);
@@ -34,6 +37,7 @@ function init() {
     board = Array(ROWS * COLS).fill('unclicked');
     isPlaying = true;
     winner = 'N';
+    time = 0;
 
     layMines();
     renderBoard();
@@ -71,6 +75,8 @@ function getWinner() {
 }
 
 function handleLeftClick(event) {
+    if (!isPlaying) return;
+    if (!time) time = timer();
 
     let cellIdx;
 
@@ -81,7 +87,6 @@ function handleLeftClick(event) {
 }
 
 function evaluateSquare(cellIdx) {
-    if (!isPlaying) return;
     
     // Prevent clicking flagged squares.
     if (cellEls[cellIdx].classList.contains('flagged')) return;
@@ -104,6 +109,7 @@ function evaluateSquare(cellIdx) {
 
 function handleRightClick(event) {
     if (!isPlaying) return;
+    if (!time) time = timer();
 
     event.preventDefault();
     const idx = event.target.id.replace('c-', '');
@@ -120,6 +126,7 @@ function revealFlags() {
         }
     })
 
+    stopTimer(time);
     renderBoard();
 }
 
@@ -131,6 +138,7 @@ function revealMines() {
         }
     })
 
+    stopTimer(time);
     renderBoard();
 }
 
@@ -142,6 +150,11 @@ function handleResetClick() {
         cellEls[idx].setAttribute('class', 'cell');
     })
 
+
+    secondsEl.innerHTML = '00';
+    minutesEl.innerHTML = '00';
+
+    stopTimer(time);
     init();
 }
 
@@ -253,4 +266,25 @@ function layMines() {
 
 function generateRandNum() {
     return Math.floor(Math.random() * (ROWS*COLS - 0));
+}
+
+function timer() {
+
+    let sec = 0;
+
+    function formatTime(value) {
+        return value > 9 ? value : '0' + value;
+    }
+
+    let t = setInterval(function() {
+        secondsEl.innerHTML = formatTime(++sec % 60);
+        minutesEl.innerHTML = formatTime(parseInt(sec/60), 10);
+    }, 1000); 
+
+    return t;
+
+}
+
+function stopTimer(t) {
+    clearInterval(t);
 }
