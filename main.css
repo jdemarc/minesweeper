@@ -32,6 +32,8 @@ header {
 } */
 
 /* Static version */
+@import url('https://fonts.googleapis.com/css2?family=Bungee+Inline&display=swap');
+
 * {
     box-sizing: border-box;
 }
@@ -40,11 +42,14 @@ body {
     height: auto;
     text-align: center;
     border: 1px solid black; /* this goes away */
+    background: dimgray;
 }
 
 header {
+    font-family: 'Bungee Inline', cursive;
     margin: 3.22vh 1.66vh;
-    width: 100%
+    width: 100%;
+    font-size: 30px;
 }
 
 #emoji {
@@ -55,15 +60,14 @@ header {
 table {
     margin: 0 auto;
     border-spacing: 0;
-    border: 3px solid black;
+    border: 2px solid black;
 }
 
 tr, td {
     height: 7vmin;
     width: 7vmin;
-    border: 3px solid black;
+    border: 2px solid black;
 }
-
 
 .bomb::before {
     content: '\1F4A3';
@@ -77,4 +81,20 @@ tr, td {
 
 button {
     margin-top: 5vh;
+}
+
+#m {
+    color: #00ff00;
+}
+
+#i {
+    color: #14ffff;
+}
+
+#n {
+    color: #ff14ff;
+}
+
+#e {
+    color: #ff7214;
 }

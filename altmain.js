@@ -14,13 +14,13 @@ const lookup = {
 
 /*----- app's state (variables) -----*/
 
-let isPlaying;
-let winner;
+let isPlaying; // true or false
+let winner; // W, N, L
 let board;
 
 /*----- cached element references -----*/
 const cellEls = document.querySelectorAll('td');
-const emoji = document.getElementById('emoji');
+const emojiEl = document.getElementById('emoji');
 
 /*----- event listeners -----*/
 document.querySelector('table').addEventListener('click', handleLeftClick);
@@ -51,11 +51,11 @@ function renderBoard() {
 function renderEmoji() {
 
     if (!isPlaying && winner === 'L') {
-        emoji.innerHTML = String.fromCodePoint('0x1F480')
+        emojiEl.innerHTML = String.fromCodePoint('0x1F480')
     } else if (winner === 'N') {
-        emoji.innerHTML = String.fromCodePoint('0x1F610');
+        emojiEl.innerHTML = String.fromCodePoint('0x1F643');
     } else {
-        emoji.innerHTML = String.fromCodePoint('0x1F60E');
+        emojiEl.innerHTML = String.fromCodePoint('0x1F60E');
     }
 }
 
