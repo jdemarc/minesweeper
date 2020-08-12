@@ -15,8 +15,8 @@ body {
 }
 
 header {
-    margin: 3.22vh 1.66vh;
-    width: 100%;
+    margin: 10px auto;
+    width: 55%;
     font-size: 30px;
     box-shadow: 5px 5px 5px 5px white;
     color: lightgray;
