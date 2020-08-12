@@ -24,8 +24,8 @@ header {
 
 #face {
     width: 100%;
-    height: 20%;
-    margin: 10px;
+    height: 10vmin;
+    margin-top: 15px;
     font-size: 40px;
     color: lightgray;
 }
