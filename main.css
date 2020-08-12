@@ -1,37 +1,3 @@
-/* body {
-    height: 100vh;
-    text-align: center;
-}
-
-#main-grid {
-    border: 1px solid black;
-    margin: 0 auto;
-}
-
-tr, td {
-    padding: 20px;
-    border: 2px solid red;
-    background: gray;
-}
-
-#clicked {
-    background: lightgray;
-}
-
-#mine {
-    background: red;
-}
-
-#hidden {
-    display: none;
-}
-
-header {
-    margin: 10px 10px;
-    width: 100%;
-} */
-
-/* Static version */
 @import url('https://fonts.googleapis.com/css2?family=Bungee+Inline&display=swap');
 
 * {
@@ -41,29 +7,36 @@ header {
 body {
     height: auto;
     text-align: center;
-    border: 1px solid black; /* this goes away */
-    background: dimgray;
+    background: #202020;
     display: flex;
     flex-wrap: wrap;
+    font-family: 'Bungee Inline', cursive;
+
 }
 
 header {
-    font-family: 'Bungee Inline', cursive;
     margin: 3.22vh 1.66vh;
     width: 100%;
     font-size: 30px;
+    box-shadow: 5px 5px 5px 5px white;
+    color: lightgray;
 }
 
 #face {
     width: 100%;
     height: 20%;
     margin: 10px;
-    font-size: 30px;
+    font-size: 40px;
+    color: lightgray;
+}
+
+.flex-ctr {
+    width: 100%;
 }
 
 table {
-    margin: 0 auto;
     border-spacing: 0px;
+    margin: 0 auto;
 }
 
 tr, td {
@@ -86,9 +59,10 @@ td:hover {
 }
 
 #timer {
-    margin: 0 auto;
+    margin: 2vmin 0;
     align-self: center;
-    width: 45min;
+    color: lightgray;
+    font-size: 20px;
 }
 #timer::before {
     content: '\231B';
@@ -96,7 +70,15 @@ td:hover {
 }
 
 button {
+    color: lightgray;
+    background: none;
+    justify-content: center;
     margin-top: 5vh;
+    outline: none;
+    border: none;
+    margin: 10px auto;
+    font-family: 'Bungee Inline', cursive;
+    font-size: 20px;
 }
 
 #m {
