@@ -9,21 +9,18 @@ Wireframe/Pseudocode
 Additional features: Running time, score and calculating score, enabling left click to mark a square as 'safe', safe-click chaining (the board will automatically mark surrouding grids as safe to an undetermined value)
 
 1. Define required constants.
-	1.1. Colors object to hold following keys:
-	null - unclicked square
-	1 - clicked safe square, no surrounding mines
-	2 - clicked safe square, 1 surrounding mine
-	3 - clicked safe square, 2 surrounding mines
-	.. as many as needed
-	4 - clicked unsafe square
-	5 - flagged unsafe square
+	1.1. Object to hold following keys:
+	mine
+	reveal
+	unclicked
+	clicked
+	flagged
 
 2. Define state variables.
-	2.1 Winner
-	2.2 Board array (1d or 2d?)
+	Board, time, isPlaying, winner
 
 3. Element caching (storing elements that will be access more than once)
-	3.1 Store x elements that represent squares on the page
+	cellEls, emojis, timeEls
 
 4. Upon loading, the app should...
 	4.1 Initialize state variables.
@@ -40,14 +37,15 @@ Additional features: Running time, score and calculating score, enabling left cl
 
 5. Hande player clicking square.
 	5.1 Obtain index of square by extracting index from id assigned to element.
-	5.2. If board has value at index; return (square already clicked)
+		5.1.1. Count the number of mines adjacent to clicked square.
+			5.1.1.1. If the count = 0, check the counts of the adjacent squares recursively.
+	
+	5.2. If the user clicks a mine, return and end game.
+	5.3. If the user clicks a 'clicked' square, return.
 	5.3. If winner === W, return. (game over)
-	5.4. If board has unsafe value at index, end game.
 	5.5. Set winner variable if they have won.
 		5.5.1. Loop through board.
 		5.5.2. If there are only safe values on the board, AND there are no more squares that can be clicked, set winner variable.
-	5.6. Check surrounding squares for unsafe squares
-		5.6.1. 
 	5.x Render state to page.
 
 6. Handle player clicking replay button.
