@@ -43,6 +43,8 @@ body {
     text-align: center;
     border: 1px solid black; /* this goes away */
     background: dimgray;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 header {
@@ -52,7 +54,9 @@ header {
     font-size: 30px;
 }
 
-.emoji {
+#face {
+    width: 100%;
+    height: 20%;
     margin: 10px;
     font-size: 30px;
 }
@@ -78,6 +82,11 @@ tr, td {
     content: '\02757';
 }
 
+#timer {
+    margin: 0 auto;
+    align-self: center;
+    width: 45min;
+}
 #timer::before {
     content: '\231B';
     font-size: 20px;

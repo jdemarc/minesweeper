@@ -6,9 +6,8 @@ const MINE_COUNT = 10;
 const lookup = {
     unclicked: 'darkgray',
     clicked: 'lightgray',
-
-    mine: 'darkgray',
     flagged: 'darkgray',
+    mine: 'darkgray',
     reveal: 'red'
 };
 
@@ -21,7 +20,7 @@ let time;
 
 /*----- cached element references -----*/
 const cellEls = document.querySelectorAll('td');
-const emojiEl = document.querySelector('.emoji');
+const emojiEl = document.getElementById('face');
 const minutesEl = document.getElementById('minutes');
 const secondsEl = document.getElementById('seconds');
 
@@ -60,8 +59,8 @@ function renderBoard() {
 
 function renderEmoji() {
 
-    if (!isPlaying && winner === 'L') {
-        emojiEl.innerHTML = String.fromCodePoint('0x1F480')
+    if (winner === 'L') {
+        emojiEl.innerHTML = String.fromCodePoint('0x1F480');
     } else if (winner === 'N') {
         emojiEl.innerHTML = String.fromCodePoint('0x1F643');
     } else {
@@ -73,13 +72,14 @@ function getWinner() {
 
     if (!board.includes('unclicked')) {
         isPlaying = false;
-        revealFlags();
+        reveal('W');
         return 'W';
     }
 
     return 'N';
 }
 
+// CSS hover
 function handleMouseEnter(event) {
     if (!isPlaying) return;
 
@@ -100,9 +100,9 @@ function handleMouseLeave(event) {
 function handleLeftClick(event) {
     if (!isPlaying) return;
     if (!time) time = timer();
-
+    
     let cellIdx;
-
+    
     event.target === undefined ? cellIdx = event.id.replace('c-', '')
         : cellIdx = event.target.id.replace('c-', '');
 
@@ -111,23 +111,52 @@ function handleLeftClick(event) {
 
 function evaluateSquare(cellIdx) {
     
-    // Prevent clicking flagged squares.
+    // Prevents clicking flagged squares.
     if (cellEls[cellIdx].classList.contains('flagged')) return;
 
     if (board[cellIdx] === 'mine') {
-
+        
         isPlaying = false;
         winner = 'L';
-
-        revealMines();
+        reveal('L');
         return;
     }
-
+    
     board[cellIdx] = 'clicked';
     
     checkAdjacentSquares(cellIdx);
     winner = getWinner();
     renderBoard();
+}
+
+function checkAdjacentSquares(cIdx) {
+
+    let minesFound = 0;
+    
+    let neighborCellIdxArray = getNeighborCells(parseInt(cIdx));
+
+    neighborCellIdxArray.forEach(function (neighbor) {
+        if (board[neighbor] === 'mine') {
+            minesFound++;
+        }
+
+    })
+    
+    board[cIdx] = 'clicked';
+    //Display mines found on board.
+    cellEls[cIdx].innerHTML = minesFound;
+
+    // Recursively check surrounding cells for mines.
+    // If there are no mines found, reveal neighbor values.
+    if (minesFound === 0) {
+
+        neighborCellIdxArray.forEach(function (e) {
+
+            if (board[e] === 'unclicked') {
+                handleLeftClick(cellEls[e]);
+            }
+        })
+    }
 }
 
 function handleRightClick(event) {
@@ -137,33 +166,23 @@ function handleRightClick(event) {
     event.preventDefault();
     const idx = event.target.id.replace('c-', '');
 
-    if ((cellEls[idx].innerHTML === '')) {
-        cellEls[idx].classList.toggle('flagged');
-    }
+
+    if (board[idx] === 'clicked') return;
+
+    cellEls[idx].classList.toggle('flagged');
 }
 
 // Condense with if.
-function reveal() {
-    
-}
-
-function revealFlags() {
-    board.forEach(function(cell, idx) {
-        if (cell === 'mine') {
-            board[idx] = 'flagged';
-            cellEls[idx].setAttribute('class', 'flagged');
-        }
-    })
-
-    stopTimer(time);
-    renderBoard();
-}
-
-function revealMines() {
-    board.forEach(function (cell, idx) {
-        if (cell === 'mine') {
-            board[idx] = 'reveal';
-            cellEls[idx].setAttribute('class', 'bomb');
+function reveal(gameState) {
+    board.forEach(function(e, idx) {
+        if (e === 'mine') {
+            if (gameState === 'W') {
+                board[idx] = 'flagged';
+                cellEls[idx].setAttribute('class', 'flagged');                
+            } else {
+                board[idx] = 'reveal';
+                cellEls[idx].setAttribute('class', 'bomb');    
+            }
         }
     })
 
@@ -187,33 +206,7 @@ function handleResetClick() {
     init();
 }
 
-function checkAdjacentSquares(cIdx) {
 
-    let minesFound = 0;
-    
-    let neighborCellIdxArray = getNeighborCells(parseInt(cIdx));
-
-    neighborCellIdxArray.forEach(function (neighbor) {
-        if (board[neighbor] === 'mine') {
-            minesFound++;
-        }
-
-    })
-    board[cIdx] = 'clicked';
-    cellEls[cIdx].innerHTML = minesFound;
-
- 
-    // Recursively check surrounding cells for mines.
-    // If there are no mines found, reveal neighbor values.
-    if (minesFound === 0) {
-
-        neighborCellIdxArray.forEach(function (e) {
-            if (board[e] === 'unclicked') {
-                handleLeftClick(cellEls[e]);
-            }
-        })
-    }
-}
 
 function getNeighborCells(cIdx) {
     let row = Math.floor(cIdx / 7);
@@ -247,7 +240,7 @@ function getNeighborCells(cIdx) {
         //ANYWHERE NOT ON AN EDGE OR CORNER
         } else {
             neighbors.push(cIdx - 8, cIdx - 7, cIdx - 6,
-                           cIdx - 1,              cIdx + 1,
+                           cIdx - 1,           cIdx + 1,
                            cIdx + 6, cIdx + 7, cIdx + 8);
             
         }
@@ -270,23 +263,26 @@ function getNeighborCells(cIdx) {
     return neighbors;
 }
 
+
 function layMines() {
     
     let repeatedRands = [];
 
     for (let i = 0; i < MINE_COUNT; i++) {
+        //Generate a random number and remove the 'c-' from the id for the integer value.
         let randMine = generateRandNum();
         let rMine = 'c-' + randMine;
         
+        // If the value is not in repeatedRands, assign it to the board at the index
+        // where it appears.  Store that number in the repeatedRands array so duplicates
+        // do not occur.
         if (!repeatedRands.includes(rMine)) {
-            //used for debugging
-            // let cellEl = document.getElementById(rMine);
-            // cellEl.innerHTML = 'm';
 
             board[randMine] = 'mine';
 
             repeatedRands.push(rMine);
         } else {
+            // If a random is a duplicate, decrement the counter and generate a new random number.
             randMine = generateRandNum();
             i--;
         }
@@ -318,4 +314,5 @@ function stopTimer(t) {
     clearInterval(t);
 }
 
-//board
+// TO DO: Condense reveal function
+// Condense handlers.
