@@ -1,292 +1,264 @@
 /*----- constants -----*/
-const ROWS = 7;
-const COLS = 7;
-const MINE_COUNT = 10;
-
-const lookup = {
-    unclicked: 'darkgray',
-    clicked: 'lightgray',
-    flagged: 'darkgray',
-    mine: 'darkgray',
-    reveal: 'red'
-};
+class Cell {
+    constructor(id, rowPos, colPos) {
+        this.id = id;
+        this.rowPos = rowPos;
+        this.colPos = colPos;
+        this.closeMines = 0;
+        this.isFlagged = false;
+        this.isMine = false;
+        this.isClicked = false;
+    }
+}
+/*----- globals -----*/
+let ROWS = 4;
+let COLS = 4;
+let MINES = 2;
 
 /*----- app's state (variables) -----*/
-
-let isPlaying; // true or false
-let winner; // W, N, L
+let isPlaying;
+let winner;
 let board;
-let time;
 
 /*----- cached element references -----*/
-const cellEls = document.querySelectorAll('td');
-const emojiEl = document.getElementById('face');
-const minutesEl = document.getElementById('minutes');
-const secondsEl = document.getElementById('seconds');
+const boardEl = document.getElementById('main-grid');
+const emojiEl = document.getElementById('emoji');
+
+const buttonEl = document.getElementById('submit');
 
 /*----- event listeners -----*/
-document.querySelector('table').addEventListener('click', handleLeftClick);
-document.querySelector('table').addEventListener('contextmenu', handleRightClick);
-document.getElementById('reset').addEventListener('click', handleResetClick);
+boardEl.addEventListener('click', handleLeftClick);
+boardEl.addEventListener('contextmenu', handleRightClick);
+emojiEl.addEventListener('click', handleResetClick);
+buttonEl.addEventListener('click', handleSubmitClick);
 
 /*----- functions -----*/
 init();
 
 function init() {
-    board = Array(ROWS * COLS).fill('unclicked');
+    //Clear board HTML.
+    boardEl.innerHTML = '';
+
+    board = [];
+    //Build the board array data structure.
+    for (let i = 0; i < ROWS; i++) {
+        board.push([0]);
+        for (let j = 0; j < COLS; j++) {
+            board[i][j] = 0;
+        }
+    }
+
+    //Give each cell an ID. Mostly debugging purposes.
+    let idx = 0;
+
+    for (i = 0; i < ROWS; i++) {
+        for (j = 0; j < COLS; j++) {
+            board[i][j] = new Cell(idx, i, j);
+            idx++;
+        }
+    }
+    
     isPlaying = true;
     winner = 'N';
-    time = 0;
 
-    layMines();
-    renderBoard();
+    buildBoard(ROWS, COLS);
+    layMines(MINES);
+    render();
 }
 
-function renderBoard() {
+function handleSubmitClick() {
+    ROWS = document.getElementById('rows').value;
+    COLS = document.getElementById('cols').value;
+
+    ROWS * COLS > MINES ? MINES = ROWS * COLS - 1 : MINES = document.getElementById('mines').value;
+
+    init();
+}
+
+function render() {
+    //Render board HTML.
+    board.forEach(function(row, rIdx) {
+        row.forEach(function(cell, cIdx) {
+            let targetCell = boardEl.rows[rIdx].cells[cIdx];
+
+            if (cell.isClicked && !cell.isFlagged) {
+                targetCell.setAttribute('class', 'clicked');
+                targetCell.innerHTML = cell.closeMines;
+            }
+
+            if (!cell.isClicked && cell.isFlagged) {
+                targetCell.setAttribute('class', 'flagged');
+                targetCell.innerHTML = String.fromCodePoint(0x1F6A9);
+            }
+                
+            if (!cell.isClicked && !cell.isFlagged) {
+                targetCell.setAttribute('class', 'unclicked');
+                targetCell.innerHTML = '';
+            }
+
+            //Reveal all mines as flagged.
+            if (winner === 'W') {
+                if (cell.isMine) {
+                    targetCell.setAttribute('class', 'flagged');
+                    targetCell.innerHTML = String.fromCodePoint(0x1F6A9);
+                    board
+                }
+            }
+
+            //Reveal all mines as exploded.
+            if (winner === 'L') {
+                if (cell.isMine) {
+                    targetCell.setAttribute('class', 'mine');
+                    targetCell.innerHTML = String.fromCodePoint(0x1F4A3);
+                }
+            }
+        })
+    })
     
-    board.forEach(function(cell, idx) {
-        cellEls[idx].style.background = lookup[cell];
+    renderMessage();
+}
+
+function checkGameState() {
+    let allSquaresChecked = true;
+
+    board.forEach(function(row) {
+        row.forEach(function(cell) {
+
+            //Check that no cell is an unclicked mine or unclicked cell.
+            if (!((cell.isClicked && !cell.isMine) || (!cell.isClicked && cell.isMine)))
+                allSquaresChecked = false;
+        })
     })
 
-    renderEmoji();
+    return allSquaresChecked ? 'W' : 'N';
 }
 
-function renderEmoji() {
-
-    if (winner === 'L') {
-        emojiEl.innerHTML = String.fromCodePoint('0x1F480');
+function renderMessage() {
+    if (winner === 'W') {
+        emojiEl.innerHTML = String.fromCodePoint(0x1F60E);
     } else if (winner === 'N') {
-        emojiEl.innerHTML = String.fromCodePoint('0x1F643');
-    } else {
-        emojiEl.innerHTML = String.fromCodePoint('0x1F60E');
+        emojiEl.innerHTML = String.fromCodePoint(0x1F643);
+    } else if (winner === 'L') {
+        emojiEl.innerHTML = String.fromCodePoint(0x1F480);
     }
 }
 
-function getWinner() {
+function fetchEventInfo(evt) {
+    let targetCell = evt.target;
+    let row = targetCell.parentNode.rowIndex;
+    let col = targetCell.cellIndex;
 
-    if (!board.includes('unclicked')) {
-        isPlaying = false;
-        reveal('W');
-        return 'W';
-    }
-
-    return 'N';
+    return clickedCellObj = board[row][col];
 }
 
 function handleLeftClick(event) {
+    //Prevent clicking if the game is over.
     if (!isPlaying) return;
-    if (!time) time = timer();
-    
-    let cellIdx;
-    
-    event.target === undefined ? cellIdx = event.id.replace('c-', '')
-        : cellIdx = event.target.id.replace('c-', '');
 
-    evaluateSquare(cellIdx);
-}
+    let clickedCellObj = fetchEventInfo(event);
 
-function evaluateSquare(cellIdx) {
+    //Disable ability to left click a flagged cell.
+    if (clickedCellObj.isFlagged) return;
     
-    // Prevents clicking flagged squares.
-    if (cellEls[cellIdx].classList.contains('flagged')) return;
-
-    if (board[cellIdx] === 'mine') {
-        
-        isPlaying = false;
+    if (clickedCellObj.isMine) {
+        // Game over
         winner = 'L';
-        reveal('L');
+        isPlaying = false;
+        render();
         return;
     }
-    
-    board[cellIdx] = 'clicked';
-    
-    checkAdjacentSquares(cellIdx);
-    winner = getWinner();
-    renderBoard();
+
+    checkAdjacentCells(clickedCellObj);
+
+    winner = checkGameState();
+    render();
 }
 
-function checkAdjacentSquares(cIdx) {
-
+function checkAdjacentCells(currCellObj) {
     let minesFound = 0;
-    
-    let neighborCellIdxArray = getNeighborCells(parseInt(cIdx));
+    currCellObj.isClicked = true;
 
-    neighborCellIdxArray.forEach(function (neighbor) {
-        if (board[neighbor] === 'mine') {
-            minesFound++;
-        }
+    //Row and column values as stored in object.
+    let r = currCellObj.rowPos;
+    let c = currCellObj.colPos;
 
-    })
-    
-    board[cIdx] = 'clicked';
-    //Display mines found on board.
-    cellEls[cIdx].innerHTML = minesFound;
+    //Check the adjacent cells for mines.  If a mine is found, increment minesFound.
+    for (let i = Math.max(r-1, 0); i <= Math.min(r+1, ROWS-1); i++) {
+        for (let j = Math.max(c-1, 0); j <= Math.min(c+1, COLS-1); j++) {
 
-    // Recursively check surrounding cells for mines.
-    // If there are no mines found, reveal neighbor values.
-    if (minesFound === 0) {
+            let neighborCellObj = board[i][j];
 
-        neighborCellIdxArray.forEach(function (e) {
-
-            if (board[e] === 'unclicked') {
-                handleLeftClick(cellEls[e]);
+            if (neighborCellObj.isMine) {
+                minesFound++;
             }
-        })
+        }
+    }
+    
+    //Assign the object the number of mines surrounding it.
+    currCellObj.closeMines = minesFound;
+
+    //If no mines were found at the current click,
+    if (!currCellObj.closeMines) {
+        for (let i = Math.max(r-1, 0); i <= Math.min(r+1, ROWS-1); i++) {
+            for (let j = Math.max(c-1, 0); j <= Math.min(c+1, COLS-1); j++) {
+                
+                let neighborCellObj = board[i][j];
+
+                //Check neighbors recursively
+                if (!neighborCellObj.isClicked && !neighborCellObj.isFlagged) {
+                    checkAdjacentCells(neighborCellObj);
+                }
+            }
+        }
     }
 }
 
 function handleRightClick(event) {
-    if (!isPlaying) return;
-    if (!time) time = timer();
+    //Prevent clicking if the game is over.
+    if(!isPlaying) return;
 
     event.preventDefault();
-    const idx = event.target.id.replace('c-', '');
 
+    let clickedCellObj = fetchEventInfo(event);
 
-    if (board[idx] === 'clicked') return;
+    //Disable ability to flag a clicked cell.
+    if (clickedCellObj.isClicked) return;
 
-    cellEls[idx].classList.toggle('flagged');
+    //If the cell is not flagged, change obj.isFlagged to true.
+    clickedCellObj.isFlagged === false ?
+        clickedCellObj.isFlagged = true : clickedCellObj.isFlagged = false;
+
+    render();
 }
 
-// Condense with if.
-function reveal(gameState) {
-    board.forEach(function(e, idx) {
-        if (e === 'mine') {
-            if (gameState === 'W') {
-                board[idx] = 'flagged';
-                cellEls[idx].setAttribute('class', 'flagged');                
-            } else {
-                board[idx] = 'reveal';
-                cellEls[idx].setAttribute('class', 'bomb');    
-            }
-        }
-    })
+function buildBoard(ROWS, COLS) {
+    //Build grid in HTML
+    for (let i = 0; i < ROWS; i++) {
+        let row = boardEl.insertRow(i);
+        
+        for(let j = 0; j < COLS; j++) {
+            let cell = row.insertCell(j);
 
-    stopTimer(time);
-    renderBoard();
+            cell.setAttribute('class', 'unclicked');
+        }
+    }
+}
+
+function layMines(MINES) {
+    for (let i = 0; i < MINES; i++) {
+        let row = Math.floor(Math.random() * ROWS);
+        let col = Math.floor(Math.random() * COLS);
+
+        //Grab the cell object at the randomly generated position
+        let cellObj = board[row][col];
+
+        //If already true, decrement count so a new number is generated.
+        if (cellObj.isMine === true) i--;
+
+        cellObj.isMine = true;
+    }
 }
 
 function handleResetClick() {
-    
-    // Reset HTML of cells.
-    board.forEach(function (cellEl, idx) {
-        cellEls[idx].innerHTML = '';
-        cellEls[idx].setAttribute('class', 'cell');
-    })
-
-
-    secondsEl.innerHTML = '00';
-    minutesEl.innerHTML = '00';
-
-    stopTimer(time);
     init();
 }
-
-function getNeighborCells(cIdx) {
-    let row = Math.floor(cIdx / 7);
-    let col = cIdx % 7;
-
-    let neighbors = [];
-
-    if (row === 0) {
-        //TOP LEFT
-        if (col === 0) {
-            neighbors.push(cIdx + 1, cIdx + 7, cIdx + 8);
-        
-        //TOP MIDDLE
-        } else if (col > 0 && col < 6) {
-            neighbors.push(cIdx - 1, cIdx + 1, cIdx + 6, cIdx + 7, cIdx + 8);
-        
-        //TOP RIGHT
-        } else {
-            neighbors.push(cIdx - 1, cIdx + 6, cIdx + 7);
-        }
-    
-    } else if (row > 0 && row < 6) {
-        //MIDDLE LEFT
-        if (col === 0) {
-            neighbors.push(cIdx - 7, cIdx - 6, cIdx + 1, cIdx + 7, cIdx + 8);
-        
-        //MIDDLE RIGHT
-        } else if (col === 6) {
-            neighbors.push(cIdx - 8, cIdx - 7, cIdx - 1, cIdx + 6, cIdx + 7);
-
-        //ANYWHERE NOT ON AN EDGE OR CORNER
-        } else {
-            neighbors.push(cIdx - 8, cIdx - 7, cIdx - 6,
-                           cIdx - 1,           cIdx + 1,
-                           cIdx + 6, cIdx + 7, cIdx + 8);
-            
-        }
-    
-    } else if (row === 6) {
-        //BOTTOM LEFT
-        if (col === 0) {
-            neighbors.push(cIdx - 7, cIdx - 6, cIdx + 1);
-
-        //BOTTOM MIDDLE
-        } else if (col > 0 && col < 6) {
-            neighbors.push(cIdx - 8, cIdx - 7, cIdx - 6, cIdx - 1, cIdx + 1);
-
-        // BOTTOM RIGHT
-        } else {
-            neighbors.push(cIdx - 1, cIdx - 8, cIdx - 7);
-        }
-    }
-    
-    return neighbors;
-}
-
-
-function layMines() {
-    
-    let repeatedRands = [];
-
-    for (let i = 0; i < MINE_COUNT; i++) {
-        //Generate a random number and remove the 'c-' from the id for the integer value.
-        let randMine = generateRandNum();
-        let rMine = 'c-' + randMine;
-        
-        // If the value is not in repeatedRands, assign it to the board at the index
-        // where it appears.  Store that number in the repeatedRands array so duplicates
-        // do not occur.
-        if (!repeatedRands.includes(rMine)) {
-
-            board[randMine] = 'mine';
-
-            repeatedRands.push(rMine);
-        } else {
-            // If a random is a duplicate, decrement the counter and generate a new random number.
-            randMine = generateRandNum();
-            i--;
-        }
-    }
-}
-
-function generateRandNum() {
-    return Math.floor(Math.random() * (ROWS*COLS - 0));
-}
-
-function timer() {
-
-    let sec = 0;
-
-    function formatTime(value) {
-        return value > 9 ? value : '0' + value;
-    }
-
-    let t = setInterval(function() {
-        secondsEl.innerHTML = formatTime(++sec % 60);
-        minutesEl.innerHTML = formatTime(parseInt(sec/60), 10);
-    }, 1000); 
-
-    return t;
-
-}
-
-function stopTimer(t) {
-    clearInterval(t);
-}
-
-// TO DO: Condense reveal function
-// Condense handlers.

@@ -5,94 +5,91 @@
 }
 
 body {
-    height: auto;
-    text-align: center;
-    background: #202020;
+    font-family: 'Bungee Inline', cursive;
     display: flex;
     flex-wrap: wrap;
-    font-family: 'Bungee Inline', cursive;
-
+    margin: 0 auto;
+    text-align: center;
+    background:#202020;
+    height: 100%;
 }
-
 header {
     margin: 15px auto;
     width: 50%;
     font-size: 30px;
     box-shadow: 5px 5px 5px 5px white;
-    color: lightgray;
-}
-
-#face {
-    width: 100%;
-    height: 10vmin;
-    margin-top: 15px;
-    font-size: 40px;
-    color: lightgray;
+    background: -webkit-linear-gradient(lightgray, #00FF99);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .flex-ctr {
     width: 100%;
 }
 
-table {
-    border-spacing: 0px;
-    margin: 0 auto;
-}
-
-tr, td {
-    height: 7vmin;
-    width: 7vmin;
+#main-grid {
     border: 2px solid black;
-    border-radius: 10%;
+    margin: 0 auto;
+    border-spacing: 0px;
 }
 
-td:hover {
-    background-color: lightgray !important;
-}
-.bomb::before {
-    content: '\1F4A3';
-    font-size: 20px;
+#main-grid tr, td {
+    background: darkgray;
+    border: 2px solid #00FF99
 }
 
-.flagged::before {
-    content: '\02757';
+td {
+    height: 10vmin;
+    width: 10vmin;
+    border-radius: 5px solid black;
 }
 
-#timer {
-    margin: 2vmin 0;
-    align-self: center;
+#emoji, .mine, .flagged {
+    font-size: 30px;
+}
+
+#emoji {
+    width: 100%;
+    font-size: 50px;
     color: lightgray;
-    font-size: 20px;
-}
-#timer::before {
-    content: '\231B';
-    font-size: 20px;
+    margin-top: 5vmin;
+    margin-bottom: 2vmin;
 }
 
-button {
+.unclicked {
+    background: darkgray;
+}
+
+.clicked {
+    background: lightgray;
+}
+
+.mine {
+    background: red;
+}
+
+.input {
     color: lightgray;
-    background: none;
-    justify-content: center;
-    margin-top: 5vh;
+    margin-left: 10px;
+}
+
+input[type='number'] {
+    margin-top: 7vmin;
+    width: 10%;
     outline: none;
-    border: none;
-    margin: 10px auto;
+    background: lightgray;
+}
+
+input[type='number']:focus {
+    border-radius: 5px;
+    border-color: #00FF99;
+}
+
+#submit {
     font-family: 'Bungee Inline', cursive;
     font-size: 20px;
-}
-
-#m {
-    color: #00ff00;
-}
-
-#i {
-    color: #14ffff;
-}
-
-#n {
-    color: #ff14ff;
-}
-
-#e {
-    color: #ff7214;
+    margin-top: 7vmin;
+    background: -webkit-linear-gradient(#00FF99, lightgray);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
