@@ -9,11 +9,7 @@ Don't try to break me with putting too many mines.  _It won't work!_
 [Play here!](https://jdemarc.github.io/minesweeper/)
 
 ## Screenshots
-After loading, the UI should appear similar to the following wireframe:
-
-<img src='https://i.imgur.com/jkpi2ZZ.png'>
-
-Cleaned up, we get...
+After loading, the UI should appear as follows:
 
 <img src='https://i.imgur.com/ndyFlTZ.png'>
 
