@@ -69,10 +69,21 @@ function init() {
 function handleSubmitClick() {
     ROWS = document.getElementById('rows').value;
     COLS = document.getElementById('cols').value;
+    let inputMines = document.getElementById('mines').value;
 
-    ROWS * COLS > MINES ? MINES = ROWS * COLS - 1 : MINES = document.getElementById('mines').value;
+    validateInput(ROWS, COLS, inputMines);
 
     init();
+}
+
+function validateInput(rows, cols, inputM) {
+
+    if (rows * cols > inputM) {
+        MINES = document.getElementById('mines').value;
+    } else {
+        MINES = rows * cols - 1;
+        console.log('mines fixed');
+    }
 }
 
 function render() {
