@@ -75,7 +75,7 @@ td {
 
 input[type='number'] {
     margin-top: 7vmin;
-    width: 10%;
+    width: 10vmin;
     outline: none;
     background: lightgray;
 }
