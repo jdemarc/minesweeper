@@ -82,7 +82,7 @@ function validateInput(rows, cols, inputM) {
         MINES = document.getElementById('mines').value;
     } else {
         MINES = rows * cols - 1;
-        console.log('mines fixed');
+        document.getElementById('mines').value = 1;
     }
 }
 
